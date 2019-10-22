@@ -6,7 +6,7 @@ node('master'){
        
          stage('SonarQube analysis') 
          {
-    withSonarQubeEnv('My SonarQube Server') 
+    withSonarQubeEnv('sonar') 
     {
         sh '/opt/maven/bin/mvn clean package sonar:sonar -Dsonar.password=admin -Dsonar.login=admin'
     } // SonarQube taskId is automatically attached to the pipeline context
