@@ -6,15 +6,15 @@ node('master')
                   git 'https://github.com/mythribhay/healthinsuranceclaimsystem.git'
               }
        
-   stage('SonarQube analysis') 
+   stage('Build') 
          {
                   withSonarQubeEnv('sonar') 
                   {
-                        sh '/opt/maven/bin/mvn clean package sonar:sonar -Dsonar.password=admin -Dsonar.login=admin'
+                        sh '/opt/maven/bin/mvn clean verify sonar:sonar -Dsonar.password=admin -Dsonar.login=admin'
                   } // SonarQube taskId is automatically attached to the pipeline context
          }
   
-   stage("Run the build based on Quality Gate")
+   stage("Quality Gate check")
          {
                   timeout(time: 1, unit: 'HOURS') 
                   { // Just in case something goes wrong, pipeline will be killed after a timeout
@@ -25,19 +25,15 @@ node('master')
                         }
                   }
          }
-   stage('Build')
-         {
-             sh '/opt/maven/bin/mvn clean install'
-         }
-
-   stage('Execution')
-        {
-             sh 'export JENKINS_NODE_COOKIE=dontKillMe ;nohup java -Dspring.profiles.active=dev -jar $WORKSPACE/target/*.jar &'
-         }
    
-   stage('Deploy')
+      stage('Deploy')
         {
              sh '/opt/maven/bin/mvn clean deploy '
+         }
+
+   stage('Run the application')
+        {
+             sh 'export JENKINS_NODE_COOKIE=dontKillMe ;nohup java -Dspring.profiles.active=dev -jar $WORKSPACE/target/*.jar &'
          }
 }
 
