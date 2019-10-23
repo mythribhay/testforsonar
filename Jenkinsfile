@@ -3,7 +3,7 @@ node('master')
    
    stage('Git checkout')
              {
-                  git 'https://github.com/mythribhay/healthinsuranceclaimsystem.git'
+                  git 'https://github.com/mythribhay/Inglibrary.git'
               }
        
    stage('Build') 
